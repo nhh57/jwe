@@ -3,16 +3,19 @@ package org.example;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSAEncrypter;
-import com.nimbusds.jose.shaded.json.JSONObject;
+import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.security.*;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
-import java.text.ParseException;
+import java.util.Date;
 import java.util.Map;
 
 public class RSAKeyGenerator {
@@ -37,67 +40,47 @@ public class RSAKeyGenerator {
         }
     }
 
-    public static Map<String, Object> SolveJWE(PrivateKey privateKey, String JWEToken) throws JOSEException, ParseException {
+    public static Map<String, Object> SolveJWE(PrivateKey privateKey, String JWEToken) throws Exception {
         // Tạo JWEObject từ chuỗi JWE Token
-        JWEObject parsedJWE = JWEObject.parse(JWEToken);
+        JWEObject jweObject = JWEObject.parse(JWEToken);
         // Giải mã JWE với PrivateKey
-        parsedJWE.decrypt(new RSADecrypter(privateKey));
-        // Lấy lại SignedJWT từ JWE
-        SignedJWT signedJWTDecrypt = parsedJWE.getPayload().toSignedJWT();
-        // Lấy claims từ JWT
-        JWTClaimsSet claims = signedJWTDecrypt.getJWTClaimsSet();
-        return claims.getClaims();
+        jweObject.decrypt(new RSADecrypter(privateKey));
+
+        String payload = jweObject.getPayload().toString();
+
+        SignedJWT signedJWT = SignedJWT.parse(payload);
+
+        JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+
+        return claimsSet.getClaims();
     }
 
+    public String CreateJWE(PrivateKey privateKey, PublicKey publicKey, String subject, String issuer, long expirationTimeInMillis, Map<String, Object> additionalClaims) throws Exception {
+        JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder()
+                .subject(subject)
+                .issuer(issuer)
+                .expirationTime(new Date(new Date().getTime() + expirationTimeInMillis));
 
-    // Method for creating JWE with JSONObject as payload
-    public String CreateJWE(PublicKey publicKey, JSONObject data) throws JOSEException {
+        // Thêm các claim từ Map
+        if (additionalClaims != null) {
+            additionalClaims.forEach(builder::claim);
+        }
+        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), builder.build());
+
+        // Ký JWT bằng PrivateKey
+        JWSSigner signer = new RSASSASigner(privateKey);
+        signedJWT.sign(signer);
+
+
         JWEHeader header = new JWEHeader.Builder(
                 JWEAlgorithm.RSA_OAEP_256,
                 EncryptionMethod.A256GCM
         ).contentType("JWT").build();
+        System.out.println("header: " + header);
 
-        Payload payload = new Payload(data);
-        JWEObject jweObject = new JWEObject(header, payload);
+        JWEObject jweObject = new JWEObject(header, new Payload(signedJWT));
         jweObject.encrypt(new RSAEncrypter((RSAPublicKey) publicKey));
-        return jweObject.serialize();
+        String jweString = jweObject.serialize();
+        return jweString;
     }
-
-    // Method for creating JWE with byte array as payload
-    public String CreateJWE(PublicKey publicKey, byte[] data) throws JOSEException {
-        JWEHeader header = new JWEHeader.Builder(
-                JWEAlgorithm.RSA_OAEP_256,
-                EncryptionMethod.A256GCM
-        ).contentType("JWT").build();
-
-        Payload payload = new Payload(data);
-        JWEObject jweObject = new JWEObject(header, payload);
-        jweObject.encrypt(new RSAEncrypter((RSAPublicKey) publicKey));
-        return jweObject.serialize();
-    }
-
-    public String CreateJWE(PublicKey publicKey, String data) throws JOSEException {
-        JWEHeader header = new JWEHeader.Builder(
-                JWEAlgorithm.RSA_OAEP_256,
-                EncryptionMethod.A256GCM
-        ).contentType("String").build();
-
-        Payload payload = new Payload(data);
-        JWEObject jweObject = new JWEObject(header, payload);
-        jweObject.encrypt(new RSAEncrypter((RSAPublicKey) publicKey));
-        return jweObject.serialize();
-    }
-
-    public String CreateJWE(PublicKey publicKey, SignedJWT data) throws JOSEException {
-        JWEHeader header = new JWEHeader.Builder(
-                JWEAlgorithm.RSA_OAEP_256,
-                EncryptionMethod.A256GCM
-        ).contentType("JWT").build();
-
-        Payload payload = new Payload(data);
-        JWEObject jweObject = new JWEObject(header, payload);
-        jweObject.encrypt(new RSAEncrypter((RSAPublicKey) publicKey));
-        return jweObject.serialize();
-    }
-
 }

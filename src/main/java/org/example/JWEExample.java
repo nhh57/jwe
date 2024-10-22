@@ -1,23 +1,17 @@
 //package org.example;
 //
-//import com.nimbusds.jose.JWEObject;
-//import com.nimbusds.jose.crypto.RSADecrypter;
-//import com.nimbusds.jose.shaded.json.JSONObject;
-//
 //import java.security.PrivateKey;
 //import java.security.PublicKey;
 //import java.util.Map;
 //
 //public class JWEExample {
-//    public static final String TOKEN = "eyJraWQiOiJWTlBBWSIsImN0eSI6IkpXVCIsImVuYyI6IkEyNTZHQ00iLCJhbGciOiJSU0EtT0FFUC0yNTYifQ.ae5piQmhBej36v92yAZkC2qdL0uvvA4dTg4plobuRqV4ofOGCJ8AHBcDN3ZCshgM2rMzWulWrMUN0rur-YaDu5iz1tOYpiOAIoaajBDZNUBI5GYPyw3r45hd9ajN9JrPUa8Hz5voQuQo0Dt_vs_kO072DVhrqCRwCO2NC6rJ3VSQsNNUOz_eQVTDx_VGX0yUbThOOHSAW8TBp5MEWGUA20HrrCM0OqzIGCI-rBeWZTYkuUhDQw8HseMu5hhFa5FyqX-enaeSzJRUSjyTTXNyPp-ANDuwb72GxRKh7VZaEfEMVnk_anDq5Prj5VSs18v2_bkC-lQNckNF5TXrKiS5-w.9mOntj7MqFCd9A4s.bgg-28AolsXCrfSwk9kbBN_xxccRwqPEmbsUi_v4rXhnfSFcLriC9XKDq_GuXJp6Cm8y4O8j1LBaNHhE1Lai1n9aZPEvtmTI2eOhFfjJ1eUsmcwj1Iq-LjGpabk2c9VLUde3GTW9z29AnkByIw9TdTinNltAeHCRj8BtLKFYOEuxX5IdnxNiPx_3wMpXc-88fILm_W7NvD5b76kDxoiALpJCwSGwmQFBj9YGmsuAHpKQaDCm8VxdqOEEe-_8oFKAFg0cWPprm8doyBdBgt1gbvVDD6QoC-g9_bIOOrFr0hHtzVdChIUmN64R4WP43Q4bZ3KWny3O1ApTnwzYCFamx32-_hkcJGr6iWOx6HcluB4xRFi7EdN_yXyoANK5-9RK_16aUBqj593mK-CJHj1u_umxIWsXue_TTBjEUMe-BQQHNWgpyUD9MBPdq5unTjvHKswsuJTRp0uDFWZrxVxadipj-udWx3SSM9zlfJ1O34IXWghEB-YoKSnCUnzpcj0Dtpv92PajemlcPSkK3wMYV12UBGKa-OgMBB_YNhyLCzLpnffcV_XJhtn_xaigYkIAhI-OQW2Dk8YxoMFsNrsMn_cncvNiBCJlnBdwUHv3_bH2eoGM_6eTsHINKVJ83NzMp6A.C0u3mobkg2p1_gVrLsytrg";
+//    public static final String TOKEN = "eyJjdHkiOiJTdHJpbmciLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAtMjU2In0.opqfiHhZRGVPcODj-R7pOSh_351yURCdWyQzhVkV4fkRXyvmGIJk7Pv50sPiNXcqoCYQQ67Wt5CL0BwFojTksyJnEWAKm54Qucdo1l1K5MP_TYYGyr5rjOUIa-128DlWPKn3Dq-QeDMVForhENpSKACWEBFK-ABT4fFI8qMdh8_qjOQS3pLP1htMriYXQ1qUr6EDriIlmdcyGKXnu8YXCK60-XrlysjWMP90DHqPFtU7qG2rr2SbuhjYHxruMWZSbN-s67Y4ihHcACGXqd-WQroJGP3p2T6vRf2NMcHIVetp-pl4_gGoJ09r2VABW3guL9SoEBvkmb4u7TA16aWNZg.hRpldBtY0qHjh_DN.eylLk4Un-k7kT173XJRf7Dx6_CX2v6Izx0w4JOaZiZBd8UI.mo9FDMgu20kTUvZBMZcjCA";
 //
 //    public static void main(String[] args) throws Exception {
 //        // Tạo cặp khóa RSA chỉ một lần
 //        PublicKey publicKey = RSAKeyGenerator.readPublicKey("publicKey");
 //        // Đọc khóa riêng từ file
 //        PrivateKey privateKey = RSAKeyGenerator.readPrivateKey("privateKey");
-//        System.out.println("Public Key: " + publicKey);
-//        System.out.println("Private Key: " + privateKey);
 //
 //        // Giải mã JWE (ở phía nhận, sử dụng khóa riêng)
 ////        JWEObject parsedJWE = JWEObject.parse(TOKEN);
